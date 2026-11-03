@@ -37,17 +37,17 @@ jobs:
           cp ios-report/ipad-launch.png /tmp/framefit-report/ 2>/dev/null || true
           git fetch origin framefit-build-results || true
           if git show-ref --verify --quiet refs/remotes/origin/framefit-build-results; then
-            git worktree add /tmp/framefit-results origin/framefit-build-results
+            git checkout --detach origin/framefit-build-results
           else
-            git worktree add --detach /tmp/framefit-results HEAD
-            cd /tmp/framefit-results
             git checkout --orphan framefit-build-results
             git rm -rf .
           fi
-          cd /tmp/framefit-results
           cp /tmp/framefit-report/* .
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add .
+          git add -- build.log exit-code.txt source-commit.txt
+          for file in processes.txt ipad-launch.png; do
+            if [ -f "$file" ]; then git add -- "$file"; fi
+          done
           git diff --cached --quiet || git commit -m 'Record iPad build and launch check'
           git push origin HEAD:refs/heads/framefit-build-results
