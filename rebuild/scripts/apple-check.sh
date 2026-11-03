@@ -7,7 +7,7 @@ app="$report/FrameFitPad.app"
 mkdir -p "$app"
 arch="$(uname -m)"
 sdk="$(xcrun --sdk iphonesimulator --show-sdk-path)"
-mapfile_available=no
+export SDKROOT="$sdk"
 sources=()
 while IFS= read -r source; do sources+=("$source"); done < <(find "$root/FrameFitPad.swiftpm/Sources" -name '*.swift' -type f | sort)
 xcrun swiftc -swift-version 5 -parse-as-library -sdk "$sdk" -target "$arch-apple-ios17.0-simulator" -module-name FrameFitPad "${sources[@]}" -o "$app/FrameFitPad"
